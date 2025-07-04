@@ -1,0 +1,63 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.env
+
+# Appium specific
+appium.log
+*.app
+*.zip
+*.log
+
+# WDIO artifacts
+.allure-results/
+allure-report/
+errorShots/
+logs/
+report/
+
+# IDE/OS related
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+*.iml
+*.bak
+*.tmp
+Thumbs.db
+desktop.ini
+
+# Android Emulator/SDK
+.emulator_console_auth_token
+*.avd/
+*.ini
+*.lock
+*.img
+*.qcow2
+*.ram
+*.bin
+
+# macOS and Linux
+*.pid
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Appium build artifacts
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
+# Test results cache
+.wdio/

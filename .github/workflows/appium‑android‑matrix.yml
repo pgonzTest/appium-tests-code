@@ -1,0 +1,55 @@
+name: Run Appium WDIO tests on Android API matrix
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  android-tests:
+    name: API ${{ matrix.api }}
+    runs-on: ubuntu-latest
+
+    # Run the same job on three API levels
+    strategy:
+      fail-fast: false        # keep the other matrix legs running if one fails
+      matrix:
+        api-level: [30, 33, 35]
+
+    steps:
+      # 1. Check out repository
+      - uses: actions/checkout@v4
+
+      # 2. Set up Node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      # 3. Install project dependencies
+      - name: Install NPM dependencies
+        run: npm ci
+
+      # 4. Install Appium server + UiAutomator2 driver globally
+      - name: Install Appium & drivers
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+      # 5. Launch emulator and run tests
+      - name: Start emulator and run WDIO tests
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: google_apis
+          arch: x86_64
+          script: |
+            # Start Appium server in the background
+            appium --log-level error &
+
+            # Give the server a few seconds to come online
+            sleep 10
+
+            # tests script
+            npm run test-android-emulator
