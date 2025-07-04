@@ -34,12 +34,11 @@ jobs:
 
       # 4. Install Appium server + UiAutomator2 driver globally
       - name: Install Appium & drivers
-      - run: |
+        run: |
           npm install -g appium
           if ! appium driver list --installed | grep -q uiautomator2; then
             appium driver install uiautomator2
           fi
-
 
       # 5. Launch emulator and run tests
       - name: Start emulator and run WDIO tests
