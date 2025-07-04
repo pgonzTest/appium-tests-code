@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false        # keep the other matrix legs running if one fails
       matrix:
-        api-level: [30, 33, 35]
+        api: [30, 33, 35]
 
     steps:
       # 1. Check out repository
@@ -46,6 +46,9 @@ jobs:
           target: google_apis
           arch: x86_64
           script: |
+            # Add adb to PATH
+            export PATH=$PATH:$ANDROID_HOME/platform-tools
+            
             # Start Appium server in the background
             appium --log-level error &
 
