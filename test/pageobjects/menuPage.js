@@ -18,7 +18,8 @@ class MenuPage {
   }
 
   async getMenuItem(optionText) {
-    return await $(`android=new UiSelector().text("${optionText}")`);
+    // return await $(`android=new UiSelector().text("${optionText}")`);
+    return await $(`android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().text("${optionText}"))`);
   }
 
   get outsideArea() {
