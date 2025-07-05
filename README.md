@@ -1,6 +1,7 @@
 # Appium WDIO Mobile Tests (Android Emulator CI/CD)
 
 This repository contains Android mobile UI tests for an Test Android application using **Appium** and **WebdriverIO**. The tests are executed automatically in CI/CD through **GitHub Actions**, using the **Android Emulator Runner** action across multiple Android API levels.
+Each Android API level is tested **in parallel**, enabling faster feedback and better coverage across Android versions.
 
 ## Tech Stack
 
