@@ -1,0 +1,72 @@
+name: Run Appium WDIO tests on Android API matrix
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  android-tests:
+    name: Android API ${{ matrix.api }}
+    runs-on: ubuntu-latest
+
+    # Run the same job on three API levels
+    strategy:
+      fail-fast: false        # keep the other matrix legs running if one fails
+      matrix:
+        api: [30, 33, 35]
+
+    steps:
+      # 1. Check out repository
+      - uses: actions/checkout@v4
+
+      # 2. Set up Node
+      - uses: actions/setup-node@v4
+        with:
+          cache-dependency-path: ./package-lock.json
+          node-version: 20
+          cache: 'npm'
+
+      # 3. Enable KVM for Android emulator
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      
+      # 4. Install project dependencies
+      - name: Install NPM dependencies
+        run: npm ci
+
+      # 5. Install Appium server + UiAutomator2 driver globally
+      - name: Install Appium & drivers
+        run: |
+          npm install -g appium
+          appium driver update uiautomator2
+
+      # 6. Launch emulator and run tests
+      - name: Start emulator and run WDIO tests
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: google_apis
+          arch: arm64-v8a
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          channel: canary
+          disable-animations: true
+          script: |
+            export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+            # Wait for emulator fully online
+            echo "Starting Appium in background"
+            appium --log-level error &
+
+            echo "Waiting for emulator to boot..."
+            adb wait-for-device
+            adb shell getprop sys.boot_completed | grep -m 1 '1'
+            echo "Emulator booted"
+
+            # Run tests
+            npm run test-android-emulator
