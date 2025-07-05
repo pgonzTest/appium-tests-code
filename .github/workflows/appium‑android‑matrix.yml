@@ -51,7 +51,19 @@ jobs:
           npm install -g appium
           appium driver update uiautomator2
 
-      # 6. Launch emulator and run tests
+      # 6. Free up memory and disk
+      - name: Free up disk space and memory
+        run: |
+          echo "Freeing up memory and disk..."
+          sudo swapoff -a || true
+          sudo rm -rf /usr/share/dotnet/
+          sudo rm -rf /opt/ghc/
+          sudo rm -rf /usr/local/share/boost/
+          sudo rm -rf $AGENT_TOOLSDIRECTORY
+          sudo apt-get clean
+          df -h
+
+      # 7. Launch emulator and run tests
       - name: Start emulator and run WDIO tests
         uses: ReactiveCircus/android-emulator-runner@v2
         env:
@@ -68,7 +80,7 @@ jobs:
           # Run tests
           script: npm run test-android-emulator
 
-      # 7. Upload test screenshots
+      # 8. Upload test screenshots
       - name: Upload screenshots on failure
         if: failure()
         uses: actions/upload-artifact@v4
