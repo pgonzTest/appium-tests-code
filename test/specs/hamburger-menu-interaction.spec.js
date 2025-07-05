@@ -1,6 +1,12 @@
 import MenuPage from '../pageobjects/menuPage';
 
 describe('Hamburger Menu Interaction', () => {
+  afterEach(async function () {
+    if (this.currentTest.state === 'failed') {
+      const filename = `./errorShots/${this.currentTest.title.replace(/\s+/g, '_')}.png`;
+      await browser.saveScreenshot(filename);
+    }
+  });
 
   it('should open the menu when tapping the burger icon', async () => {
     await expect(MenuPage.burgerIcon).toBeDisplayed({ timeout: 5000 });

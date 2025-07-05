@@ -14,7 +14,7 @@ appium.log
 # WDIO artifacts
 .allure-results/
 allure-report/
-errorShots/
+errorShots/**
 logs/
 report/
 
