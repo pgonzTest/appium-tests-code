@@ -21,8 +21,10 @@ exports.config = {
     
     capabilities: [{
         platformName: 'Android',
-        'appium:platformVersion': '16', // emulator Android version
-        'appium:deviceName': 'emulator-5554',
+        'appium:platformVersion': process.env.ANDROID_PLATFORM_VERSION,
+        //'appium:platformVersion': '16', // emulator Android version
+        'appium:deviceName': process.env.AVD_NAME || 'Android Emulator',
+        //'appium:deviceName': 'emulator-5554',
         'appium:automationName': 'UiAutomator2',
         'appium:app': path.resolve('./apps/mda-2.2.0-25.apk'),
         'appium:autoGrantPermissions': true

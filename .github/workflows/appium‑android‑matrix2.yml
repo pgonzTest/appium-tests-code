@@ -15,7 +15,13 @@ jobs:
     strategy:
       fail-fast: false        # keep the other matrix legs running if one fails
       matrix:
-        api: [30, 33, 35]
+        include:
+          - api: 30   # Android 11
+            platformVersion: "11"
+          - api: 33   # Android 13
+            platformVersion: "13"
+          - api: 35   # Android 15 preview
+            platformVersion: "15"
 
     steps:
       # 1. Check out repository
@@ -48,6 +54,9 @@ jobs:
       # 6. Launch emulator and run tests
       - name: Start emulator and run WDIO tests
         uses: ReactiveCircus/android-emulator-runner@v2
+        env:
+          ANDROID_PLATFORM_VERSION: ${{ matrix.platformVersion }}
+          AVD_NAME: test
         with:
           api-level: ${{ matrix.api }}
           target: google_apis
@@ -55,17 +64,9 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           channel: canary
           disable-animations: true
-          script: |
-            export PATH=$PATH:$ANDROID_HOME/platform-tools
+          emulator-boot-timeout: 8000 # 8 seconds to boot the emulator
+          # Run tests
+          script: npm run test-android-emulator
 
-            # Wait for emulator fully online
-            echo "Starting Appium in background"
-            appium --log-level error &
 
-            echo "Waiting for emulator to boot..."
-            adb wait-for-device
-            adb shell getprop sys.boot_completed | grep -m 1 '1'
-            echo "Emulator booted"
-
-            # Run tests
-            npm run test-android-emulator
+            
