@@ -71,7 +71,7 @@ jobs:
       # 7. Upload test screenshots
       - name: Upload screenshots on failure
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots-${{ matrix.api }}
           path: errorShots/
